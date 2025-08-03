@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetailBot Factory - Test du Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .chat-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .language-selector {
+            margin-top: 10px;
+        }
+
+        .language-selector select {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 14px;
+        }
+
+        .language-selector option {
+            color: #333;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-info {
+            font-size: 11px;
+            color: #666;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .message.bot .message-info {
+            text-align: left;
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .suggestion {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            border: 1px solid #bbdefb;
+            transition: all 0.2s;
+        }
+
+        .suggestion:hover {
+            background: #1976d2;
+            color: white;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .product {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 12px;
+        }
+
+        .product-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .product-price {
+            color: #1976d2;
+            font-weight: bold;
+        }
+
+        .chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input input:focus {
+            border-color: #667eea;
+        }
+
+        .chat-input button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.2s;
+        }
+
+        .chat-input button:hover {
+            transform: translateY(-1px);
+        }
+
+        .chat-input button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px 16px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            max-width: 70%;
+            margin-bottom: 15px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 95%;
+                height: 90vh;
+                border-radius: 10px;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .products {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>🤖 RetailBot Factory</h1>
+            <p>Assistant IA pour le commerce électronique</p>
+            <div class="language-selector">
+                <select id="languageSelect">
+                    <option value="fr">Français</option>
+                    <option value="ar">العربية</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-content">
+                    <div>Bonjour ! Je suis votre assistant shopping. Comment puis-je vous aider aujourd'hui ?</div>
+                    <div class="suggestions">
+                        <span class="suggestion" onclick="sendSuggestion('Rechercher des produits')">Rechercher des produits</span>
+                        <span class="suggestion" onclick="sendSuggestion('Voir les offres du jour')">Voir les offres du jour</span>
+                        <span class="suggestion" onclick="sendSuggestion('Statut de ma commande')">Statut de ma commande</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Tapez votre message..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()" id="sendButton">Envoyer</button>
+        </div>
+    </div>
+
+    <script>
+        let sessionId = null;
+        let currentLanguage = 'fr';
+
+        // Gestion du changement de langue
+        document.getElementById('languageSelect').addEventListener('change', function(e) {
+            currentLanguage = e.target.value;
+            updateWelcomeMessage();
+        });
+
+        function updateWelcomeMessage() {
+            const welcomeMessages = {
+                'fr': {
+                    message: "Bonjour ! Je suis votre assistant shopping. Comment puis-je vous aider aujourd'hui ?",
+                    suggestions: ['Rechercher des produits', 'Voir les offres du jour', 'Statut de ma commande']
+                },
+                'ar': {
+                    message: "مرحبا! أنا مساعدك للتسوق. كيف يمكنني مساعدتك اليوم؟",
+                    suggestions: ['البحث عن المنتجات', 'عروض اليوم', 'حالة طلبي']
+                },
+                'en': {
+                    message: "Hello! I'm your shopping assistant. How can I help you today?",
+                    suggestions: ['Search products', "Today's offers", 'My order status']
+                }
+            };
+
+            const welcome = welcomeMessages[currentLanguage];
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = `
+                <div class="message bot">
+                    <div class="message-content">
+                        <div>${welcome.message}</div>
+                        <div class="suggestions">
+                            ${welcome.suggestions.map(s => `<span class="suggestion" onclick="sendSuggestion('${s}')">${s}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendSuggestion(text) {
+            document.getElementById('messageInput').value = text;
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+            
+            if (!message) return;
+
+            // Désactiver l'input et le bouton
+            messageInput.disabled = true;
+            document.getElementById('sendButton').disabled = true;
+
+            // Ajouter le message utilisateur
+            addMessage('user', message);
+            messageInput.value = '';
+
+            // Afficher l'indicateur de frappe
+            showTypingIndicator();
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId,
+                        language: currentLanguage,
+                        platform: 'website'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    sessionId = data.session_id;
+                    
+                    // Masquer l'indicateur de frappe
+                    hideTypingIndicator();
+                    
+                    // Ajouter la réponse du bot
+                    addBotMessage(data);
+                } else {
+                    hideTypingIndicator();
+                    addMessage('bot', 'Désolé, une erreur s\'est produite. Veuillez réessayer.');
+                }
+            } catch (error) {
+                hideTypingIndicator();
+                addMessage('bot', 'Erreur de connexion. Veuillez vérifier votre connexion internet.');
+            }
+
+            // Réactiver l'input et le bouton
+            messageInput.disabled = false;
+            document.getElementById('sendButton').disabled = false;
+            messageInput.focus();
+        }
+
+        function addMessage(sender, content, extra = {}) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+
+            let messageContent = `<div class="message-content"><div>${content}</div>`;
+
+            // Ajouter les informations de debug pour les messages bot
+            if (sender === 'bot' && extra.intent) {
+                messageContent += `<div class="message-info">Intent: ${extra.intent} (${Math.round(extra.confidence * 100)}%)</div>`;
+            }
+
+            messageContent += '</div>';
+            messageDiv.innerHTML = messageContent;
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addBotMessage(data) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+
+            let messageContent = `<div class="message-content"><div>${data.response}</div>`;
+
+            // Ajouter les suggestions
+            if (data.suggestions && data.suggestions.length > 0) {
+                messageContent += '<div class="suggestions">';
+                data.suggestions.forEach(suggestion => {
+                    messageContent += `<span class="suggestion" onclick="sendSuggestion('${suggestion}')">${suggestion}</span>`;
+                });
+                messageContent += '</div>';
+            }
+
+            // Ajouter les produits
+            if (data.products && data.products.length > 0) {
+                messageContent += '<div class="products">';
+                data.products.forEach(product => {
+                    messageContent += `
+                        <div class="product">
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-price">${product.price} ${product.currency}</div>
+                        </div>
+                    `;
+                });
+                messageContent += '</div>';
+            }
+
+            // Ajouter les informations de debug
+            if (data.intent) {
+                messageContent += `<div class="message-info">Intent: ${data.intent} (${Math.round(data.confidence * 100)}%)</div>`;
+            }
+
+            messageContent += '</div>';
+            messageDiv.innerHTML = messageContent;
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'block';
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        // Focus sur l'input au chargement
+        document.getElementById('messageInput').focus();
+    </script>
+</body>
+</html>
+
