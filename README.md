@@ -423,9 +423,8 @@ git push origin feature/amazing-feature
 
 For enterprise deployments, custom integrations, and priority support:
 
-📧 **Email**: enterprise@retailbot-factory.com  
-📞 **Phone**: +1 (555) 123-4567  
-🌐 **Website**: [retailbot-factory.com](https://retailbot-factory.com)
+📧 **Email**: stylebenderkh@gmail.com 
+📞 **Phone**: +213 541095903  
 
 </div>
 
