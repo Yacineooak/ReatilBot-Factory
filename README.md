@@ -1,11 +1,11 @@
 # ReatilBot-Factory
-RetailBot Factory is a no-code AI automation suite for retailers. Build smart assistants for chat, WhatsApp, cart recovery, inventory tracking, fraud detection, and customer analytics. Tailored for Algerian cash-on-delivery models, it simplifies e-commerce and boosts sales across platforms.          Demander à ChatGPT
+RetailBot Factory is a no-code AI automation suite for retailers. Build smart assistants for chat, WhatsApp, cart recovery, inventory tracking, fraud detection, and customer analytics. Tailored for Algerian cash-on-delivery models, it simplifies e-commerce and boosts sales across platforms. 
 
 # RetailBot Factory - Documentation Complète et Guide d'Utilisation
 
 **Version :** 1.0.0  
 **Date :** 31 Juillet 2025  
-**Auteur :** Manus AI  
+**Auteur :** Yacine Khaldi 
 **Licence :** Propriétaire
 
 ---
@@ -550,6 +550,6 @@ Cette documentation complète de RetailBot Factory fournit toutes les informatio
 
 **Version du document :** 1.0.0  
 **Dernière mise à jour :** 31 Juillet 2025  
-**Auteur :** Manus AI  
+**Auteur :** Yacine Khaldi
 **© 2025 RetailBot Factory. Tous droits réservés.**
 
