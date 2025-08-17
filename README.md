@@ -3,7 +3,8 @@
 
 <div align="center">
 
-![RetailBot Factory Logo](https://via.placeholder.com/200x80/2563eb/ffffff?text=RetailBot+Factory)
+<img width="1024" height="1024" alt="RetailBot logo" src="https://github.com/user-attachments/assets/2abc7454-2782-4823-ba93-61cff7bbaead" />
+
 
 **The Ultimate No-Code AI Automation Suite for Retailers**
 
